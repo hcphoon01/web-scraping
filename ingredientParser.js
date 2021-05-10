@@ -64,7 +64,10 @@ const mapDescending = new Map([...map.entries()].sort((a, b) => b[1] - a[1]));
 
 for (const elem of map.entries()) {
   if (elem[1] >= 30) {
-    output.push(elem[0]);
+    output.push({
+      'name': elem[0],
+      'category': 0
+    });
   }
 }
 
