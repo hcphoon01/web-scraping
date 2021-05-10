@@ -2,7 +2,8 @@ const fs = require("fs");
 
 const recipes = JSON.parse(fs.readFileSync("output.json"));
 
-const output = new Map();
+const map = new Map();
+const output = [];
 
 for (let i = 0; i < recipes.length; i++) {
   const recipe = recipes[i];
@@ -19,6 +20,9 @@ for (let i = 0; i < recipes.length; i++) {
       ingredient = ingredient.replace("  ", " ");
       ingredient = ingredient.replace("about ", "");
       ingredient = ingredient.replace("litre ", "");
+      ingredient = ingredient.replace("can ", "");
+      ingredient = ingredient.replace("small ", "");
+      ingredient = ingredient.replace("large ", "");
       ingredient = ingredient.replace("/ ", "");
       ingredient = ingredient.split(" or ")[0];
       ingredient = ingredient.split("(")[0];
@@ -34,10 +38,10 @@ for (let i = 0; i < recipes.length; i++) {
 
       ingredient = titleCase(ingredient);
 
-      if (output.has(ingredient)) {
-        output.set(ingredient, output.get(ingredient) + 1);
+      if (map.has(ingredient)) {
+        map.set(ingredient, map.get(ingredient) + 1);
       } else {
-        output.set(ingredient, 1);
+        map.set(ingredient, 1);
       }
     }
   } catch (e) {
@@ -55,10 +59,16 @@ function titleCase(str) {
   return splitStr.join(" ");
 }
 
-const mapAscending = new Map([...output.entries()].sort((a, b) => a[1] - b[1]));
-const mapDescending = new Map(
-  [...output.entries()].sort((a, b) => b[1] - a[1])
-);
+const mapAscending = new Map([...map.entries()].sort((a, b) => a[1] - b[1]));
+const mapDescending = new Map([...map.entries()].sort((a, b) => b[1] - a[1]));
+
+for (const elem of map.entries()) {
+  if (elem[1] >= 30) {
+    output.push(elem[0]);
+  }
+}
+
+fs.writeFileSync('common-ingredients.json', JSON.stringify(output));
 
 //console.log(mapDescending);
-console.log(mapAscending);
+//console.log(mapAscending);
